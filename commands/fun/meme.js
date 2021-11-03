@@ -1,24 +1,25 @@
-const { MessageEmbed } = require("discord.js");
 const reddit = require("scrap-reddit");
-const utils = require("../../utils/utils");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
   name: "meme",
   aliases: [],
-  description: "Trimite un meme de pe reddit",
+  description: "Trimite un meme random",
   async execute(message, client, args) {
     const post = await reddit.randomPost("romaniamemes");
 
-    let embed = new MessageEmbed()
-      .setTitle(`${post.data.title}`)
-      .setURL(`https://reddit.com${post.data.permalink}`)
-      .setImage(post.data.url_overridden_by_dest)
-      .setTimestamp()
-      .setFooter(`r/${post.data.subreddit}`)
-      .setColor("RANDOM");
+    if (post.data.is_video) {
+      return message.reply(`Nu am putut trimite meme-ul.`);
+    } else {
+      const embed = new MessageEmbed()
+        .setTitle(`${post.data.title}`)
+        .setURL(`https://reddit.com${post.data.permalink}`)
+        .setImage(`${post.data.url}`)
+        .setColor("RANDOM")
+        .setFooter(`r/${post.data.subreddit} | 👍${post.data.ups} 👎${post.data.downs}`)
+        .setTimestamp()
 
-    message.reply({ embeds: [embed] });
+    message.reply({ embeds: [embed] })
+    }
   },
 };
-
-//
